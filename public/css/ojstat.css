@@ -1,0 +1,180 @@
+@font-face {
+    font-family: "Rajdhani";
+    src:url("../webfonts/Rajdhani-Regular.ttf");
+}
+
+body, html{
+    height:100%;
+}
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+  font-family:'Rajdhani';
+}
+
+.flex-between
+{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;   
+}
+
+.border-left-main
+{
+    border-left: 4px solid rgb(56, 138, 245);
+}
+
+.gsc_g_a
+{
+    
+    width:30px !important;
+    text-align: center !important;
+    color: #fff !important;
+    background: rgba(17, 43, 98, 1) !important;
+}
+
+.gsc_g_t
+{
+    width:30px !important;
+    text-align: center !important;
+    margin-right:2px !important;
+}
+
+@media only screen and (max-width: 700px) {
+    .toHideMe{
+        display:none;
+    }
+}
+
+.bg-smooth-blue{
+    background: rgb(174, 221, 240) !important;
+}
+.bg-hard-blue{
+    background: rgb(2, 83, 116) !important;
+}
+.home-link{
+    color:#fff !important;
+    text-decoration: none !important;
+}
+
+.home-link:hover{
+    color:rgb(226, 205, 14) !important;
+    text-decoration: none !important;
+}
+.flash{
+    width:400px;
+    height:auto;
+    padding:20px;
+    position:absolute;
+    top:10px;
+    right:0;
+    z-index: 2000;
+}
+
+/* new */
+
+.index-wrapper{
+    min-height: 100%;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: url("../img/misc/see-stat-5.jpg") no-repeat center center fixed;
+    background-size: cover;
+}
+
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+    .index-wrapper {
+      left: 50%;
+      margin-left: -512px;   /* 50% */
+    }
+}
+
+.peek{
+  position:absolute !important;
+  top:30px;
+  left:-185px;
+  z-index: -1;
+  display: none;
+  
+}
+.peek img{
+  width:300px;
+  height:auto;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes rotating {
+    from {
+      -ms-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -ms-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  .rotating {
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -ms-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+  }
+
+  table, tr, th, td, #setupLog{
+    font-family: 'Rajdhani', Courier, monospace;
+  }
+
+  .bg-unique{
+    background: rgb(61, 93, 122);
+  }
+
+  .olcounter{
+    font-family: 'Rajdhani', Courier, monospace;
+    background: rgb(221,226,231);
+    background: linear-gradient(13deg, rgba(221,226,231,0.8659663694579394) 22%, rgba(192,203,205,1) 100%); 
+  }
+
+  .setup-log-box{
+    width:100%;
+    font-family: 'Rajdhani', monospace;
+  }
+
+  .setup-log-box span{
+    display: block;
+  }

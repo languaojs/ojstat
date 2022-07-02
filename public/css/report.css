@@ -1,0 +1,14 @@
+.report-bg{
+  background: rgb(78,110,152);
+  background: linear-gradient(34deg, rgba(78,110,152,1) 45%, rgba(146,183,190,1) 100%);
+}
+
+.small-box{
+  width:auto;
+  height:50px;
+}
+
+canvas{
+  background: #fff;
+  padding:5px;
+}
