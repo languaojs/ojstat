@@ -7,7 +7,7 @@ OJStat is a free statistic counter built for OJS-based journals built by using S
 3. Create an empty database (take notes about the database information like database hostname, database user name, password, and database name)
 4. Locate OJS root directory and create a folder with any name, in this example I use ojstats as the folder name
 5. Upload OJStat zip to the folder (4)
-6. Extract the zip file
+6. Extract the zip file (make sure that inside the folder ojstats are app and public folder, not ojstat-main folder)
 7. Open config.php that is located in app/config folder
 8. Add the BASEURL (e.g., http://jurnal.stkipkieraha.ac.id/ojstats)
 9. Add the database information
