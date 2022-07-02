@@ -1,0 +1,1 @@
+<h2>Journal Not Found!</h2>
