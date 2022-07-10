@@ -1,5 +1,5 @@
 # OJStat
-OJStat is a free statistic counter built for OJS-based journals built by using SimorePHP. It is developed with passion to contribute, to ease the work of journal managers/editors/publishers to analyze their journal statistics.
+OJStat is a free statistic counter built for OJS-based journals. It is developed with passion to contribute, to ease the work of journal managers/editors/publishers to analyze their journal statistics.
 
 # Installing OJStat
 1. Download OJStat to your local computer
