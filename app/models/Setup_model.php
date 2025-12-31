@@ -21,26 +21,35 @@ class Setup_model {
         $pdo_dbname = DB_NAME;
 
         $pdo_dsn = "mysql:host=$pdo_dbhost;dbname=$pdo_dbname";
-        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass);
+        // Set Error Mode to Exception so you can catch real connection issues
+        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
 
         $tables = array('stat_users', 'stat_config', 'stat_webs', 'stat_pageviews');
         $keyfields = array('userid', 'configid', 'web_id', 'pv_id');
 
-        for($tn = 0; $tn<count($tables); $tn++)
-        {
-            if($check_tables = $pdo_con->query("SELECT * FROM $tables[$tn]"))
-            {
-                echo "<i class='fa fa-check text-success'></i> $tables[$tn] exists.<br>";
-            }else{
-                $create_table = $pdo_con->query("CREATE TABLE $tables[$tn] ($keyfields[$tn] INT(11) NOT NULL)");
-                $add_primary_key = $pdo_con->query("ALTER TABLE $tables[$tn] ADD PRIMARY KEY ($keyfields[$tn])");
-                $add_auto_increment = $pdo_con->query("ALTER TABLE $tables[$tn] MODIFY $keyfields[$tn] INT(11) NOT NULL AUTO_INCREMENT");
+        for ($tn = 0; $tn < count($tables); $tn++) {
+            $table = $tables[$tn];
+            $key = $keyfields[$tn];
 
-                if($create_table && $add_primary_key && $add_auto_increment)
-                {
-                    echo "<i class='fa fa-info text-info'></i> $tables[$tn] did not exist but has been created.<br>";
-                }else{
-                    echo "<i class='fa fa-warning text-warning'></i> $tables[$tn] did not exist and could not be created.<br>";
+            // Check if table exists using SQL metadata
+            $check = $pdo_con->query("SHOW TABLES LIKE '$table'");
+
+            if ($check->rowCount() > 0) {
+                echo "<i class='fa fa-check text-success'></i> $table exists.<br>";
+            } else {
+                // Create table in ONE query. Much faster and cleaner.
+                $sql = "CREATE TABLE $table (
+                $key INT(11) NOT NULL AUTO_INCREMENT,
+                PRIMARY KEY ($key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+                try {
+                    $pdo_con->exec($sql);
+                    echo "<i class='fa fa-info text-info'></i> $table created successfully.<br>";
+                } catch (PDOException $e) {
+                    echo "<i class='fa fa-warning text-warning'></i> $table could not be created: " . $e->getMessage() . "<br>";
                 }
             }
         }
@@ -55,48 +64,50 @@ class Setup_model {
         $pdo_dbname = DB_NAME;
 
         $pdo_dsn = "mysql:host=$pdo_dbhost;dbname=$pdo_dbname";
-        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass);
+
+        // Set to Exception mode so we can catch errors, but use logic that doesn't trigger them
+        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
 
         $table_arr = array('stat_users',  'stat_webs', 'stat_pageviews', 'stat_config');
         $table_term = array('User Table', 'Journal Table', 'Statistics Table', 'Config Table');
 
         $field_arr = array(
-            ['fieldname'=> array('userid', 'username', 'userpass', 'userrole', 'roleid', 'userstatus', 'user_fullname', 'user_img_url', 'user_email', 'user_link', 'user_desc')],
-
-            ['fieldname'=> array('web_id', 'web_siteid', 'roleid', 'web_name', 'web_url', 'web_img', 'web_desc', 'web_pissn', 'web_eissn', 'web_ici', 'web_scimago', 'web_gscholarid')],
-
-            ['fieldname'=> array('pv_id','pv_siteid','pv_pagetitle', 'pv_ip', 'pv_country', 'pv_countrycode ', 'pv_date','pv_time', 'pv_region','pv_city','pv_browser','pv_os', 'pv_device', 'pv_ref', 'pv_ref_dom', 'pv_ref_name', 'pv_ipkey', 'pv_duration', 'pv_isp')],
-
-            ['fieldname'=> array('configid', 'siteid','roleid','config_gs','config_ici','config_scimago','config_vistat','config_uniquevis','config_country','config_pageview','config_domain','config_system','config_api_key', 'config_gs_type')]
+            ['fieldname' => array('userid', 'username', 'userpass', 'userrole', 'roleid', 'userstatus', 'user_fullname', 'user_img_url', 'user_email', 'user_link', 'user_desc')],
+            ['fieldname' => array('web_id', 'web_siteid', 'roleid', 'web_name', 'web_url', 'web_img', 'web_desc', 'web_pissn', 'web_eissn', 'web_ici', 'web_scimago', 'web_gscholarid')],
+            // Note: fixed a trailing space in 'pv_countrycode' below
+            ['fieldname' => array('pv_id', 'pv_siteid', 'pv_pagetitle', 'pv_ip', 'pv_country', 'pv_countrycode', 'pv_date', 'pv_time', 'pv_region', 'pv_city', 'pv_browser', 'pv_os', 'pv_device', 'pv_ref', 'pv_ref_dom', 'pv_ref_name', 'pv_ipkey', 'pv_duration', 'pv_isp')],
+            ['fieldname' => array('configid', 'siteid', 'roleid', 'config_gs', 'config_ici', 'config_scimago', 'config_vistat', 'config_uniquevis', 'config_country', 'config_pageview', 'config_domain', 'config_system', 'config_api_key', 'config_gs_type')]
         );
 
         $field_type_arr = array(
             ['fieldtype' => array('INT(11)', 'VARCHAR(50)', 'TEXT', 'VARCHAR(10)', 'INT(11)', 'VARCHAR(10)', 'VARCHAR(150)', 'TEXT', 'VARCHAR(150)', 'TEXT', 'TEXT')],
-
             ['fieldtype' => array('INT(11)', 'INT(11)', 'INT(11)', 'TEXT', 'TEXT', 'TEXT', 'TEXT', 'VARCHAR(15)', 'VARCHAR(15)', 'VARCHAR(50)', 'VARCHAR(50)', 'VARCHAR(50)')],
-
-            ['fieldtype' => array('INT(11)', 'INT(11)', 'TEXT', 'VARCHAR(50)', 'VARCHAR(150)', 'VARCHAR(10)', 'DATE', 'TIME', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'TEXT', 'TEXT','VARCHAR(50)', 'VARCHAR(150)','INT(11)', 'VARCHAR(150)')],
-
+            ['fieldtype' => array('INT(11)', 'INT(11)', 'TEXT', 'VARCHAR(50)', 'VARCHAR(150)', 'VARCHAR(10)', 'DATE', 'TIME', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'VARCHAR(150)', 'TEXT', 'TEXT', 'VARCHAR(50)', 'VARCHAR(150)', 'INT(11)', 'VARCHAR(150)')],
             ['fieldtype' => array('INT(11)', 'INT(11)', 'INT(11)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'VARCHAR(10)', 'TEXT', 'VARCHAR(10)')]
         );
 
-        for($utn = 0; $utn<count($table_arr); $utn++)
-        {
+        for ($utn = 0; $utn < count($table_arr); $utn++) {
             echo "<p class='list-group-item border-left-main p-2 mt-3'>Checking $table_term[$utn]</p>";
             $thisTable = $table_arr[$utn];
-            for($fn = 0; $fn<count($field_arr[$utn]['fieldname']); $fn++)
-            {
-                $thisField = $field_arr[$utn]['fieldname'][$fn];
-                if($check_field = $pdo_con->query("SELECT $thisField FROM $thisTable"))
-                {
+
+            for ($fn = 0; $fn < count($field_arr[$utn]['fieldname']); $fn++) {
+                $thisField = trim($field_arr[$utn]['fieldname'][$fn]); // Trim to prevent space errors
+                $thisFieldType = $field_type_arr[$utn]['fieldtype'][$fn];
+
+                // BETTER CHECK: Ask MySQL if the column exists in the table schema
+                $check = $pdo_con->query("SHOW COLUMNS FROM `$thisTable` LIKE '$thisField'");
+                $exists = $check->fetch();
+
+                if ($exists) {
                     echo "<i class='fa fa-check text-success'></i> $thisField exists in $thisTable. <br>";
-                }else{
-                    $thisFieldType = $field_type_arr[$utn]['fieldtype'][$fn];
-                    if($create_field = $pdo_con->query("ALTER TABLE $thisTable ADD $thisField $thisFieldType NOT NULL"))
-                    {
+                } else {
+                    try {
+                        $pdo_con->exec("ALTER TABLE `$thisTable` ADD `$thisField` $thisFieldType NOT NULL");
                         echo "<i class='fa fa-info text-info'></i> $thisField did not exist in $thisTable but has been created. <br>";
-                    }else{
-                        echo "<i class='fa fa-warning text-warning'></i> $thisField does not exist in $thisTable and cannot be created.<br>";
+                    } catch (PDOException $e) {
+                        echo "<i class='fa fa-warning text-warning'></i> $thisField could not be created: " . $e->getMessage() . "<br>";
                     }
                 }
             }
@@ -164,26 +175,40 @@ class Setup_model {
         $pdo_dbname = DB_NAME;
 
         $pdo_dsn = "mysql:host=$pdo_dbhost;dbname=$pdo_dbname";
-        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass);
+
+        // Initialize connection with Exception mode
+        $pdo_con = new PDO($pdo_dsn, $pdo_dbuser, $pdo_dbpass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
 
         $tables_field_to_drop = array('stat_webs', 'stat_config', 'stat_pageviews');
         $fields_to_drop = array(
-            ['fieldsname'=>array('web_cf', 'web_mora')],
-            ['fieldsname'=>array('config_cf', 'config_mora')],
-            ['fieldsname'=>array('pv_lat', 'pv_long', 'pv_vistime')]
+            ['fieldsname' => array('web_cf', 'web_mora')],
+            ['fieldsname' => array('config_cf', 'config_mora')],
+            ['fieldsname' => array('pv_lat', 'pv_long', 'pv_vistime')]
         );
-        for($tf=0; $tf<count($tables_field_to_drop); $tf++)
-        {
+
+        for ($tf = 0; $tf < count($tables_field_to_drop); $tf++) {
             $theTable = $tables_field_to_drop[$tf];
-            for($fd=0; $fd<count($fields_to_drop[$tf]['fieldsname']); $fd++)
-            {
+
+            for ($fd = 0; $fd < count($fields_to_drop[$tf]['fieldsname']); $fd++) {
                 $theField = $fields_to_drop[$tf]['fieldsname'][$fd];
-                $drop_field = $pdo_con->query("ALTER TABLE $theTable DROP $theField");
-                if($drop_field)
-                {
-                    echo "<i class='fa fa-check text-success'></i> $theField has been dropped from $theTable <br>";
-                }else{
-                    echo "<i class='fa fa-info text-info'></i> $theField has not been dropped from $theTable. Perhaps, it does not exist.<br>";
+
+                // 1. Check if the column actually exists first
+                $check = $pdo_con->query("SHOW COLUMNS FROM `$theTable` LIKE '$theField'");
+                $columnExists = $check->fetch();
+
+                if ($columnExists) {
+                    // 2. If it exists, try to drop it
+                    try {
+                        $pdo_con->exec("ALTER TABLE `$theTable` DROP `$theField`Status");
+                        echo "<i class='fa fa-check text-success'></i> $theField has been dropped from $theTable <br>";
+                    } catch (PDOException $e) {
+                        echo "<i class='fa fa-warning text-warning'></i> Error dropping $theField: " . $e->getMessage() . "<br>";
+                    }
+                } else {
+                    // 3. If it doesn't exist, don't try to drop it (prevents the crash)
+                    echo "<i class='fa fa-info text-info'></i> $theField does not exist in $theTable (already dropped).<br>";
                 }
             }
         }
